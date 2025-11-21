@@ -82,6 +82,7 @@ function install_1password() {
     if [[ -e "/usr/local/bin/op" ]]; then
       echo "1Password is already installed."
     else
+      brew install unzip
       wget "https://cache.agilebits.com/dist/1P/op2/pkg/v2.30.3/op_linux_amd64_v2.30.3.zip" -O op.zip && \
       unzip -d op op.zip && \
       sudo mv op/op /usr/local/bin/ && \
