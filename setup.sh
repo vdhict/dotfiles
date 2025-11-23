@@ -109,5 +109,5 @@ install_1password
 echo "Applying Chezmoi configuration."
 chezmoi init "${DOTFILES_REPO_URL}"
 cd ~/.local/share/chezmoi
-git remote set-url origin git@github.com:szinn/dotfiles.git
+git remote set-url origin git@github.com:vdhict/dotfiles.git
 chezmoi apply
