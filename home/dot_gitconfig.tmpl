@@ -1,0 +1,24 @@
+[user]
+	email = sheijden@vdh-ict.nl
+	name = Sander van der Heijden
+	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGnwauL+hXLMeDe2zpCYaqZAR0KDjwZ7s/BDeLS08/4y
+
+[credential]
+	helper = /mnt/c/Program\\ Files/Git/mingw64/bin/git-credential-manager.exe
+[core]
+	sshCommand = ssh.exe
+{{- if eq .chezmoi.os "windows" }}
+	autocrlf = true
+{{- else }}
+	autocrlf = input
+{{- end }}
+
+[gpg]
+	format = ssh
+
+[gpg "ssh"]
+	program = "/mnt/c/Users/SandervanderHeijden/AppData/Local/Microsoft/WindowsApps/op-ssh-sign-wsl.exe"
+
+[commit]
+	gpgsign = true
+
