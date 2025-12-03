@@ -15,13 +15,13 @@ Managed with [`chezmoi`](https://chezmoi.io), a great dotfiles manager.
 You can use the [convenience script](./scripts/install_dotfiles.sh) to install the dotfiles on any machine with a single command. Simply run the following command in your terminal:
 
 ```bash
-sh -c "$(wget -qO- https://git.io/felipecrs-dotfiles)"
+sh -c "$(wget -qO- https://raw.githubusercontent.com/vdhict/dotfiles/HEAD/scripts/install_dotfiles.sh)"
 ```
 
 > 💡 We use `wget` here because it comes preinstalled with most Ubuntu versions. But you can also use `curl`:
 >
 > ```bash
->  sh -c "$(curl -fsSL https://git.io/felipecrs-dotfiles)"
+>  sh -c "$(curl -fsSL [https://git.io/felipecrs-dotfiles](https://raw.githubusercontent.com/vdhict/dotfiles/HEAD/scripts/install_dotfiles.sh))"
 > ```
 
 ### Demo
@@ -84,7 +84,7 @@ It supports some environment variables:
 For example, you can use it to clone and install the dotfiles repository at the `beta` branch with:
 
 ```console
-DOTFILES_BRANCH=beta sh -c "$(wget -qO- https://git.io/felipecrs-dotfiles)"
+DOTFILES_BRANCH=beta sh -c "$(wget -qO- https://raw.githubusercontent.com/vdhict/dotfiles/HEAD/scripts/install_dotfiles.sh)"
 ```
 
 ### Installing without the convenience script
@@ -104,7 +104,7 @@ git clone https://github.com/felipecrs/dotfiles "$HOME/.dotfiles"
 If you are forking this repository, don't forget to change the following places:
 
 - [`README.md`](./README.md)
-  - Replace all occurrences of `https://git.io/felipecrs-dotfiles` with `https://raw.githubusercontent.com/<your-username>/dotfiles/HEAD/scripts/install_dotfiles.sh`
+  - Replace all occurrences of `https://raw.githubusercontent.com/vdhict/dotfiles/HEAD/scripts/install_dotfiles.sh` with `https://raw.githubusercontent.com/<your-username>/dotfiles/HEAD/scripts/install_dotfiles.sh`
 - [`scripts/install_dotfiles.sh`](./scripts/install_dotfiles.sh)
   - Replace all occurrences of `felipecrs` with `<your-username>`
 - [`home/.chezmoi.yaml.tmpl`](./home/.chezmoi.yaml.tmpl)
