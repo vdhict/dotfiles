@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# {{ template "scripts-library" }}
+
+# Skip in minimum mode
+{{ if .is_minimum }}
+exit 0
+{{ end }}
+
+true || source ../.chezmoitemplates/scripts-library
+
+# Install Homebrew if not present
+install_homebrew() {
+  if command -v brew &>/dev/null; then
+    return 0
+  fi
+
+  log_task "Installing Homebrew..."
+
+  if [[ "$(uname)" == "Darwin" ]]; then
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    eval "$(/opt/homebrew/bin/brew shellenv)" 2>/dev/null || eval "$(/usr/local/bin/brew shellenv)"
+  else
+    # Linux installation
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" 2>/dev/null || true
+  fi
+}
+
+install_homebrew
+
+# Ensure brew is in PATH
+if ! command -v brew &>/dev/null; then
+  BREW_PREFIX="$(get_homebrew_prefix)"
+  if [[ -n "${BREW_PREFIX}" ]]; then
+    eval "$("${BREW_PREFIX}/bin/brew" shellenv)"
+  else
+    log_error "Homebrew not found after installation"
+    exit 1
+  fi
+fi
+
+# Install packages from Brewfile
+BREWFILE="{{ .paths.config }}/homebrew/Brewfile"
+
+if [[ -f "${BREWFILE}" ]]; then
+  log_task "Installing Homebrew packages from Brewfile..."
+  c brew bundle --file="${BREWFILE}" --no-lock
+else
+  log_info "Brewfile not found at ${BREWFILE}"
+fi
+
+log_success "Homebrew packages installed"

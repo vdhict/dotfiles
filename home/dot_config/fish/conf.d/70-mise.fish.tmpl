@@ -1,0 +1,11 @@
+# mise - runtime version manager (Node.js, Python, Go, Rust, etc.)
+if type -q mise
+    # Handle VS Code environment specially
+    if test "$VSCODE_RESOLVING_ENVIRONMENT" = 1
+        mise activate fish --shims | source
+    else if status is-interactive
+        mise activate fish | source
+    else
+        mise activate fish --shims | source
+    end
+end

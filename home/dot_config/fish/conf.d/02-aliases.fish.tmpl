@@ -1,0 +1,15 @@
+# Common aliases
+alias x exit
+alias c clear
+
+# Use modern tools if available
+if type -q eza
+    alias ls eza
+    alias ll 'eza -la --git'
+    alias la 'eza -a'
+    alias lt 'eza --tree'
+end
+
+if type -q bat
+    alias cat bat
+end

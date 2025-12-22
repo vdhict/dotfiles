@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+# {{ template "scripts-library" }}
+
+# Only run in WSL
+{{ if not .is_wsl }}
+exit 0
+{{ end }}
+
+# Skip in minimum mode
+{{ if .is_minimum }}
+exit 0
+{{ end }}
+
+true || source ../.chezmoitemplates/scripts-library
+
+FONT_NAME="FiraCode Nerd Font Mono"
+FONT_URL="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FiraCode.zip"
+
+# Check if font is already installed on Windows
+WINDOWS_FONTS="/mnt/c/Windows/Fonts"
+if [[ -d "${WINDOWS_FONTS}" ]] && find "${WINDOWS_FONTS}" -iname "*FiraCode*Nerd*" -print -quit 2>/dev/null | grep -q .; then
+  log_info "${FONT_NAME} already installed on Windows"
+  exit 0
+fi
+
+log_task "Installing ${FONT_NAME} on Windows..."
+
+# Create temp directory
+TEMP_DIR=$(mktemp -d)
+cd "${TEMP_DIR}"
+
+# Download font
+log_info "Downloading font..."
+curl -sSfLO "${FONT_URL}"
+
+# Extract
+unzip -q FiraCode.zip
+
+# Get Windows user profile path
+WIN_USERPROFILE=$(cmd.exe /c "echo %USERPROFILE%" 2>/dev/null | tr -d '\r')
+if [[ -z "${WIN_USERPROFILE}" ]]; then
+  log_error "Could not determine Windows user profile"
+  rm -rf "${TEMP_DIR}"
+  exit 1
+fi
+
+# Convert to WSL path
+WSL_FONTS=$(wslpath "${WIN_USERPROFILE}")/AppData/Local/Microsoft/Windows/Fonts
+
+# Create fonts directory if it doesn't exist
+mkdir -p "${WSL_FONTS}" 2>/dev/null || true
+
+# Copy fonts
+log_info "Copying fonts to Windows..."
+cp -f *.ttf "${WSL_FONTS}/" 2>/dev/null || {
+  log_error "Could not copy fonts. Try running as administrator."
+  rm -rf "${TEMP_DIR}"
+  exit 1
+}
+
+# Clean up
+cd -
+rm -rf "${TEMP_DIR}"
+
+log_success "${FONT_NAME} installed on Windows"
+log_manual_action "You may need to restart Windows Terminal for the font to appear"

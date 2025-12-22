@@ -1,0 +1,132 @@
+#!/bin/sh
+
+# Cursor editor wrapper with WSL and remote session support
+# Adapted from felipecrs/dotfiles
+
+set -eu
+
+if [ -n "${DEBUG:-}" ]; then
+  set -x
+fi
+
+# Add spacing after git hint messages
+if [ -n "${GIT_INDEX_FILE:-}" ]; then
+  echo >&2
+fi
+
+# Detect if we're trying to open a directory
+target_dir=""
+for arg in "$@"; do
+  if [ "${arg#-}" = "${arg}" ]; then
+    if [ -d "${arg}" ]; then
+      target_dir="${arg}"
+    fi
+    break
+  fi
+done
+
+# If opening a folder, drop --wait flag (workaround for chezmoi)
+new_args=""
+for arg in "$@"; do
+  if [ "${arg}" = "--wait" ] || [ "${arg}" = "-w" ]; then
+    if [ -n "${target_dir}" ]; then
+      echo "INFO(cursor): dropping --wait since a directory is being opened" >&2
+      continue
+    fi
+  fi
+  new_args="${new_args} ${arg}"
+done
+set -- ${new_args}
+
+# Detect environment
+is_wsl=false
+if [ -n "${WSL_DISTRO_NAME:-}" ] || [ -n "${IS_WSL:-}" ]; then
+  is_wsl=true
+fi
+
+# Remote mode control
+remote=true
+if [ -n "${NO_REMOTE:-}" ]; then
+  remote=false
+fi
+
+# Find cursor executable
+find_cursor() {
+  # Check common locations
+  if [ "${is_wsl}" = true ] && [ "${remote}" = true ]; then
+    # In WSL, prefer Windows Cursor
+    for path in \
+      "/mnt/c/Users/*/AppData/Local/Programs/cursor/Cursor.exe" \
+      "/mnt/c/Program Files/Cursor/Cursor.exe"; do
+      # shellcheck disable=SC2086
+      if cursor_path=$(ls -1 ${path} 2>/dev/null | head -1) && [ -n "${cursor_path}" ]; then
+        echo "${cursor_path}"
+        return 0
+      fi
+    done
+  fi
+
+  # Check PATH
+  if command -v cursor >/dev/null 2>&1; then
+    command -v cursor
+    return 0
+  fi
+
+  # macOS application
+  if [ -x "/Applications/Cursor.app/Contents/MacOS/Cursor" ]; then
+    echo "/Applications/Cursor.app/Contents/MacOS/Cursor"
+    return 0
+  fi
+
+  # Linux locations
+  for path in \
+    "/usr/bin/cursor" \
+    "/usr/local/bin/cursor" \
+    "${HOME}/.local/bin/cursor-real" \
+    "/opt/Cursor/cursor"; do
+    if [ -x "${path}" ]; then
+      echo "${path}"
+      return 0
+    fi
+  done
+
+  return 1
+}
+
+# Try to find and execute cursor
+if cursor_exe=$(find_cursor); then
+  if [ "${is_wsl}" = true ] && echo "${cursor_exe}" | grep -q "^/mnt/"; then
+    echo "INFO(cursor): using Cursor from Windows" >&2
+  fi
+  exec "${cursor_exe}" "$@"
+fi
+
+# Fallback to code/VS Code if cursor not found
+echo "WARNING(cursor): cursor not found" >&2
+
+if command -v code >/dev/null 2>&1; then
+  echo "INFO(cursor): falling back to VS Code" >&2
+  exec code "$@"
+fi
+
+# Final fallback to terminal editors
+if [ -n "${target_dir}" ]; then
+  echo "ERROR(cursor): cannot open directory with fallback editor" >&2
+  exit 127
+fi
+
+for editor in nano vim vi; do
+  if command -v "${editor}" >/dev/null 2>&1; then
+    echo "INFO(cursor): falling back to ${editor}" >&2
+    # Remove --wait flag for terminal editors
+    for arg in "$@"; do
+      if [ "${arg}" = "--wait" ] || [ "${arg}" = "-w" ]; then
+        shift
+      fi
+    done
+    exec "${editor}" "$@"
+  fi
+done
+
+echo "ERROR(cursor): no editor found" >&2
+exit 127

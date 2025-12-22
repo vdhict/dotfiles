@@ -1,0 +1,35 @@
+{{ if .is_minimum -}}
+# Minimum mode: only essential shell config
+.chezmoiscripts/*
+!.chezmoiscripts/*-initialize-fish.sh
+!.chezmoiscripts/*-install-fish-plugins.sh
+!.chezmoiscripts/*-final-message.sh
+
+# Skip heavy configs in minimum mode
+.local/bin/cursor
+.config/cursor
+{{- end }}
+
+{{ if not .is_gnome -}}
+.chezmoiscripts/*-configure-gnome.sh
+{{- end }}
+
+{{ if not .is_wsl -}}
+.chezmoiscripts/*-install-terminal-font-on-windows.sh
+.chezmoiscripts/*-configure-windows-terminal.sh
+{{- end }}
+
+{{ if .is_macos -}}
+# Skip Linux-only scripts on macOS
+.chezmoiscripts/*-run-rootmoi.sh
+{{- end }}
+
+{{ if .is_devcontainer -}}
+# Skip 1Password in devcontainers (secrets handled differently)
+.chezmoiscripts/*-install-1password-cli.sh
+private_dot_ssh/private_id_ed25519.tmpl
+{{- end }}
+
+# Cache files
+**/*.zwc
+.cache/*

@@ -1,0 +1,8 @@
+# GitHub CLI
+if type -q gh
+    abbr --add -- ghprc 'gh pr create --fill-verbose'
+    abbr --add -- ghprv 'gh pr view --web'
+    abbr --add -- ghprm 'gh pr merge --squash'
+    abbr --add -- ghprl 'gh pr list'
+    abbr --add -- ghis 'gh issue list'
+end

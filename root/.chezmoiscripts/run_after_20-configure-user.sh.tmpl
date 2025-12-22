@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# {{ template "scripts-library" }}
+
+# Skip on non-Linux systems
+{{ if not .is_linux }}
+exit 0
+{{ end }}
+
+true || source ../.chezmoitemplates/scripts-library
+
+# Get the non-root username
+non_root_user="{{ env "USER" }}"
+if [[ -z "${non_root_user}" ]] || [[ "${non_root_user}" == "root" ]]; then
+  non_root_user="{{ env "SUDO_USER" }}"
+fi
+
+if [[ -z "${non_root_user}" ]]; then
+  log_error "Could not determine non-root user"
+  exit 1
+fi
+
+# Configure passwordless sudo (optional - comment out if not wanted)
+sudoers_file="/etc/sudoers.d/${non_root_user}"
+sudoers_content="${non_root_user}  ALL=(ALL) NOPASSWD:ALL"
+if [[ ! -f "${sudoers_file}" ]] || ! grep -q "${sudoers_content}" "${sudoers_file}"; then
+  log_task "Configuring passwordless sudo for ${non_root_user}"
+  echo "${sudoers_content}" > "${sudoers_file}"
+  chmod 440 "${sudoers_file}"
+fi
+
+# Add user to docker group
+if getent group docker >/dev/null 2>&1; then
+  if ! groups "${non_root_user}" | grep -q '\bdocker\b'; then
+    log_task "Adding ${non_root_user} to docker group"
+    usermod -aG docker "${non_root_user}"
+  fi
+fi

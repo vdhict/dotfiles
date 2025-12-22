@@ -1,0 +1,18 @@
+# Environment variables
+set -gx VISUAL cursor
+set -gx EDITOR cursor
+set -gx LANG "en_US.UTF-8"
+
+# Go paths
+set -gx GOPATH {{ .chezmoi.homeDir }}/.go
+set -gx GOBIN "$GOPATH/bin"
+
+# XDG Base Directory Specification
+set -gx XDG_CACHE_HOME "{{ .paths.cache }}"
+set -gx XDG_CONFIG_HOME "{{ .paths.config }}"
+set -gx XDG_DATA_HOME "{{ .paths.local }}/share"
+set -gx XDG_STATE_HOME "{{ .paths.local }}/state"
+
+# Disable telemetry
+set -gx DO_NOT_TRACK 1
+set -gx DOTNET_CLI_TELEMETRY_OPTOUT 1

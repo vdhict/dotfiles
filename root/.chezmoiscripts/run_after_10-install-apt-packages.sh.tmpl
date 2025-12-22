@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+# {{ template "scripts-library" }}
+
+# Skip on non-Debian systems
+{{ if not (or .is_ubuntu .is_debian) }}
+exit 0
+{{ end }}
+
+true || source ../.chezmoitemplates/scripts-library
+
+readonly wanted_packages=(
+  # Essential build tools
+  build-essential
+  curl
+  wget
+  git
+
+  # Shell
+  fish
+
+  # Utilities
+  jq
+  tree
+  file
+  zip
+  unzip
+  htop
+
+  # Network tools
+  dnsutils
+
+  # Python
+  python3
+  python3-pip
+
+  # Docker
+  docker-ce
+  docker-ce-cli
+  containerd.io
+  docker-compose-plugin
+  docker-buildx-plugin
+
+  {{ if .is_gnome }}
+  # GNOME desktop packages
+  gnome-tweaks
+  {{ end }}
+
+  {{ if .is_wsl }}
+  # WSL utilities
+  wslu
+  {{ end }}
+)
+
+missing_packages=()
+
+for package in "${wanted_packages[@]}"; do
+  if ! is_apt_package_installed "${package}"; then
+    missing_packages+=("${package}")
+  fi
+done
+
+if [[ ${#missing_packages[@]} -gt 0 ]]; then
+  log_task "Installing missing packages: ${missing_packages[*]}"
+
+  c apt-get update
+  c env DEBIAN_FRONTEND=noninteractive apt-get install -y "${missing_packages[@]}"
+fi

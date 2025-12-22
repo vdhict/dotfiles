@@ -1,0 +1,13 @@
+# External files managed by chezmoi
+# https://www.chezmoi.io/reference/special-files-and-directories/chezmoiexternal-format/
+
+# FiraCode Nerd Font (Linux only - macOS uses Homebrew cask)
+{{ if and .is_linux (not .is_minimum) }}
+".local/share/fonts/FiraCodeNerdFont":
+  type: archive
+  url: "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FiraCode.zip"
+  stripComponents: 0
+  refreshPeriod: 168h  # 1 week
+  include:
+    - "*.ttf"
+{{ end }}

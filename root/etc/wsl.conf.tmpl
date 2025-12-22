@@ -1,0 +1,19 @@
+{{ if .is_wsl }}
+# WSL Configuration
+# https://docs.microsoft.com/en-us/windows/wsl/wsl-config
+
+[boot]
+systemd = true
+
+[interop]
+enabled = true
+appendWindowsPath = true
+
+[automount]
+enabled = true
+mountFsTab = true
+options = "metadata,umask=22,fmask=11"
+
+[network]
+generateResolvConf = true
+{{ end }}

@@ -1,0 +1,14 @@
+{{ if .is_wsl }}
+# Skip SSH server config in WSL (managed by Windows)
+etc/ssh
+.chezmoiscripts/*-reload-sshd.sh
+{{ else }}
+# Skip WSL config on non-WSL systems
+etc/wsl.conf
+{{ end }}
+
+{{ if .is_macos }}
+# Skip all Linux-specific root config on macOS
+etc/
+.chezmoiscripts/
+{{ end }}

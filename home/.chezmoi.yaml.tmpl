@@ -1,0 +1,142 @@
+{{- /* User defaults - change these to your own */ -}}
+{{- $name := "Your Name" -}}
+{{- $email := "your.email@example.com" -}}
+
+{{- /* Chezmoi force mode detection */ -}}
+{{- $chezmoiForce := or (has "--force" .chezmoi.args) (has "--force=true" .chezmoi.args) -}}
+{{- $interactive := and stdinIsATTY (not $chezmoiForce) -}}
+
+{{- /* Environment detection */ -}}
+{{- $ubuntu := hasKey .chezmoi.osRelease "ubuntuCodename" -}}
+{{- $debian := eq .chezmoi.osRelease.id "debian" -}}
+{{- $macos := eq .chezmoi.os "darwin" -}}
+{{- $linux := eq .chezmoi.os "linux" -}}
+{{- $wsl := or (env "WSL_DISTRO_NAME") (env "IS_WSL") | not | not -}}
+{{- $devcontainer := or (env "REMOTE_CONTAINERS") (env "CODESPACES") (env "VSCODE_REMOTE_CONTAINERS_SESSION") (env "GITPOD_HOST") | not | not -}}
+{{- $gnome := lookPath "gnome-shell" | not | not -}}
+{{- $headless := or (env "SSH_CLIENT" | not | not) (not (or (env "DISPLAY") (env "WAYLAND_DISPLAY"))) -}}
+
+{{- /* Minimum mode: enabled by default for devcontainers or non-supported OS */ -}}
+{{- $minimum := or $devcontainer (not (or $ubuntu $debian $macos)) -}}
+
+{{- /* Interactive prompts for name */ -}}
+{{- if hasKey . "name" -}}
+{{-   $name = .name -}}
+{{- end -}}
+{{- if $interactive -}}
+{{-   range $i := until 99 -}}
+{{-     $question := "❔ What is your full name" -}}
+{{-     $answer := "" -}}
+{{-     if $name -}}
+{{-       $answer = promptString $question $name -}}
+{{-     else -}}
+{{-       $answer = promptString $question -}}
+{{-     end -}}
+{{-     if regexMatch "^[A-Z][-' a-zA-Z]+$" $answer -}}
+{{-       $name = $answer -}}
+{{-       writeToStdout (printf "✅ Name set as '%s'\n" $name) -}}
+{{-       break -}}
+{{-     end -}}
+{{-     writeToStdout (printf "❌ '%s' is an invalid name\n" $answer) -}}
+{{-     if eq $i 98 -}}
+{{-       writeToStdout "❌ ERROR: maximum tries exceeded\n" -}}
+{{-       exit 1 -}}
+{{-     end -}}
+{{-   end -}}
+{{- end -}}
+
+{{- /* Interactive prompts for email */ -}}
+{{- if hasKey . "email" -}}
+{{-   $email = .email -}}
+{{- end -}}
+{{- if $interactive -}}
+{{-   range $i := until 99 -}}
+{{-     $question := "❔ What is your email" -}}
+{{-     $answer := "" -}}
+{{-     if $email -}}
+{{-       $answer = promptString $question $email -}}
+{{-     else -}}
+{{-       $answer = promptString $question -}}
+{{-     end -}}
+{{-     $answer = lower $answer -}}
+{{-     if regexMatch "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$" $answer -}}
+{{-       $email = $answer -}}
+{{-       writeToStdout (printf "✅ Email set as '%s'\n" $email) -}}
+{{-       break -}}
+{{-     end -}}
+{{-     writeToStdout (printf "❌ '%s' is an invalid email\n" $answer) -}}
+{{-     if eq $i 98 -}}
+{{-       writeToStdout "❌ ERROR: maximum tries exceeded\n" -}}
+{{-       exit 1 -}}
+{{-     end -}}
+{{-   end -}}
+{{- end -}}
+
+{{- /* Interactive prompt for minimum mode */ -}}
+{{- if hasKey . "is_minimum" -}}
+{{-   $minimum = .is_minimum -}}
+{{- end -}}
+{{- if $interactive -}}
+{{-   $question := "❔ Should install in minimum mode? (reduced features for devcontainers/unsupported OS)" -}}
+{{-   $minimum = promptBool $question $minimum -}}
+{{-   if $minimum -}}
+{{-     writeToStdout "✅ Minimum mode enabled\n" -}}
+{{-   else -}}
+{{-     writeToStdout "✅ Minimum mode disabled\n" -}}
+{{-   end -}}
+{{- end -}}
+
+{{- if $interactive -}}
+{{-   writeToStdout "\n💡 Tip: Run `chezmoi init` without `--force` to change these settings.\n" -}}
+{{- end -}}
+
+{{- /* Retain source directory */ -}}
+sourceDir: "{{ .chezmoi.workingTree }}"
+
+verbose: true
+pager: ""
+
+diff:
+  exclude:
+    - scripts
+status:
+  exclude:
+    - always
+
+hooks:
+  read-source-state:
+    pre:
+      command: {{ .chezmoi.workingTree }}/home/.chezmoihooks/ensure-pre-requisites.sh
+
+{{- /* Export variables for use in templates */ -}}
+data:
+  # Platform detection
+  is_ubuntu: {{ $ubuntu }}
+  is_debian: {{ $debian }}
+  is_macos: {{ $macos }}
+  is_linux: {{ $linux }}
+  is_wsl: {{ $wsl }}
+  is_devcontainer: {{ $devcontainer }}
+  is_gnome: {{ $gnome }}
+  is_headless: {{ $headless }}
+  is_minimum: {{ $minimum }}
+
+  # User info
+  name: "{{ $name }}"
+  email: "{{ $email }}"
+
+  # 1Password configuration
+  op_vault: "Employee"
+  op_ssh_item: "Git Signing Key"
+
+  # XDG paths
+  paths:
+    cache: {{ .chezmoi.homeDir }}/.cache
+    config: {{ .chezmoi.homeDir }}/.config
+    local: {{ .chezmoi.homeDir }}/.local
+
+  # Editor
+  editor: "cursor --wait"
+
+  # Architecture
+  uname_arch: "{{ output "uname" "-m" | trim }}"

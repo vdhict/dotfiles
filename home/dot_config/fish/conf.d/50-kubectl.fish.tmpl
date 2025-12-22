@@ -1,0 +1,18 @@
+# Kubernetes kubectl
+if type -q kubectl
+    if status --is-interactive
+        alias k kubectl
+    end
+
+    abbr --add -- kgp 'kubectl get pods'
+    abbr --add -- kgs 'kubectl get svc'
+    abbr --add -- kgd 'kubectl get deployments'
+    abbr --add -- kgn 'kubectl get nodes'
+    abbr --add -- kga 'kubectl get all'
+    abbr --add -- kd 'kubectl describe'
+    abbr --add -- kl 'kubectl logs'
+    abbr --add -- klf 'kubectl logs -f'
+    abbr --add -- kx 'kubectl exec -it'
+    abbr --add -- kaf 'kubectl apply -f'
+    abbr --add -- kdf 'kubectl delete -f'
+end

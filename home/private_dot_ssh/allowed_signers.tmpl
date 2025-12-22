@@ -1,0 +1,3 @@
+{{- /* Allowed signers file for git commit verification */ -}}
+{{- /* Format: email pubkey */ -}}
+{{ .email }} {{ onepasswordRead (printf "op://%s/%s/public key" .op_vault .op_ssh_item) }}

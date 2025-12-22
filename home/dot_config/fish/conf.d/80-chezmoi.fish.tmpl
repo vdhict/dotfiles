@@ -1,0 +1,10 @@
+# chezmoi - dotfiles manager
+if type -q chezmoi
+    alias cm chezmoi
+    abbr --add -- cma 'chezmoi apply'
+    abbr --add -- cms 'chezmoi status'
+    abbr --add -- cmd 'chezmoi diff'
+    abbr --add -- cme 'chezmoi edit'
+    abbr --add -- cmu 'chezmoi update'
+    abbr --add -- cmcd 'cd {{ .chezmoi.sourceDir }}'
+end

@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# {{ template "scripts-library" }}
+
+true || source ../.chezmoitemplates/scripts-library
+
+echo ""
+log_success "Dotfiles installation complete!"
+echo ""
+log_info "Summary:"
+echo "  - Shell: Fish with Starship prompt"
+echo "  - Editor: Cursor (with WSL integration if applicable)"
+{{ if not .is_devcontainer }}
+echo "  - 1Password: SSH key management and git signing"
+{{ end }}
+echo ""
+log_info "Next steps:"
+echo "  1. Restart your shell: exec fish"
+{{ if not .is_devcontainer }}
+echo "  2. Configure 1Password CLI integration:"
+echo "     - Open 1Password app > Settings > Developer"
+echo "     - Enable 'Integrate with 1Password CLI'"
+echo "  3. Test SSH key: ssh -T git@github.com"
+{{ end }}
+echo ""
+log_info "Useful commands:"
+echo "  - chezmoi diff     - See pending changes"
+echo "  - chezmoi apply    - Apply changes"
+echo "  - chezmoi update   - Pull and apply latest dotfiles"
+echo "  - chezmoi edit     - Edit source files"
+echo ""

@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# {{ template "scripts-library" }}
+
+# Skip on macOS (no rootmoi needed)
+{{ if .is_macos }}
+exit 0
+{{ end }}
+
+# Skip in devcontainer/minimum mode
+{{ if or .is_minimum .is_devcontainer }}
+exit 0
+{{ end }}
+
+# Skip if NO_ROOTMOI is set
+if [[ -n "${NO_ROOTMOI:-}" ]]; then
+  exit 0
+fi
+
+true || source ../.chezmoitemplates/scripts-library
+
+ROOTMOI="{{ joinPath .chezmoi.homeDir ".local/bin/rootmoi" }}"
+
+if [[ ! -x "${ROOTMOI}" ]]; then
+  log_error "rootmoi script not found at ${ROOTMOI}"
+  exit 1
+fi
+
+log_task "Applying root dotfiles with rootmoi..."
+c "${ROOTMOI}" apply

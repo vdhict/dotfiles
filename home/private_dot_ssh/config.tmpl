@@ -1,0 +1,31 @@
+# SSH Configuration
+# Managed by chezmoi - do not edit directly
+
+Host *
+  AddKeysToAgent yes
+  IdentitiesOnly yes
+  IdentityFile ~/.ssh/id_ed25519
+{{- if (eq .chezmoi.os "darwin") }}
+  UseKeychain yes
+  # Uncomment to use 1Password SSH Agent (requires 1Password to be unlocked)
+  # IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+{{- end }}
+
+# GitHub
+Host github.com
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/id_ed25519
+
+# GitLab
+Host gitlab.com
+  HostName gitlab.com
+  User git
+  IdentityFile ~/.ssh/id_ed25519
+
+# Add your custom hosts below
+# Example:
+# Host myserver
+#   HostName myserver.example.com
+#   User myuser
+#   IdentityFile ~/.ssh/id_ed25519

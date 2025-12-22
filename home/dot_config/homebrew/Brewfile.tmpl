@@ -1,0 +1,130 @@
+# Homebrew Bundle
+# https://github.com/Homebrew/homebrew-bundle
+
+# Taps
+tap "homebrew/bundle"
+tap "homebrew/cask-fonts"
+{{ if .is_macos }}
+tap "homebrew/cask"
+{{ end }}
+
+# ============================================
+# Core CLI Tools
+# ============================================
+
+# Shell
+brew "fish"
+brew "starship"
+
+# Version Control
+brew "git"
+brew "git-delta"
+brew "gh"
+brew "lazygit"
+
+# Search & Navigation
+brew "fzf"
+brew "ripgrep"
+brew "fd"
+brew "zoxide"
+brew "eza"
+brew "bat"
+brew "tree"
+
+# JSON/YAML
+brew "jq"
+brew "yq"
+
+# Environment
+brew "direnv"
+
+# Shell History
+brew "atuin"
+
+# HTTP/Network
+brew "curl"
+brew "wget"
+brew "httpie"
+
+# Text Processing
+brew "gnu-sed"
+brew "gawk"
+
+# Misc
+brew "coreutils"
+brew "findutils"
+brew "htop"
+brew "watch"
+brew "tldr"
+
+# ============================================
+# Development
+# ============================================
+
+# Runtime Version Manager
+brew "mise"
+
+# Build tools
+brew "cmake"
+brew "make"
+
+# Formatters & Linters
+brew "shellcheck"
+brew "shfmt"
+brew "prettier"
+
+# ============================================
+# Kubernetes (Full tooling)
+# ============================================
+
+brew "kubectl"
+brew "kubectx"
+brew "helm"
+brew "k9s"
+brew "krew"
+brew "stern"
+brew "flux"
+
+# ============================================
+# Container & Cloud
+# ============================================
+
+brew "docker-compose"
+{{ if .is_macos }}
+brew "colima"
+{{ end }}
+
+# ============================================
+# Security & Secrets
+# ============================================
+
+{{ if .is_macos }}
+cask "1password-cli"
+{{ end }}
+brew "sops"
+brew "age"
+
+# ============================================
+# Chezmoi
+# ============================================
+
+brew "chezmoi"
+
+# ============================================
+# Fonts (macOS only)
+# ============================================
+
+{{ if .is_macos }}
+cask "font-fira-code-nerd-font"
+{{ end }}
+
+# ============================================
+# Applications (macOS only)
+# ============================================
+
+{{ if .is_macos }}
+cask "cursor"
+cask "wezterm"
+cask "1password"
+cask "docker"
+{{ end }}

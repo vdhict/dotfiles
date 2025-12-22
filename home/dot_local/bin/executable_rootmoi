@@ -1,0 +1,20 @@
+#!/bin/bash
+# Rootmoi - chezmoi wrapper for root configuration
+# Runs chezmoi as root with the root/ source directory
+
+set -euo pipefail
+
+DOTFILES_DIR="${HOME}/.dotfiles"
+ROOT_SOURCE="${DOTFILES_DIR}/root"
+
+if [[ ! -d "${ROOT_SOURCE}" ]]; then
+  echo "ERROR: Root source directory not found: ${ROOT_SOURCE}" >&2
+  exit 1
+fi
+
+# Run chezmoi as root
+exec sudo chezmoi \
+  --source="${ROOT_SOURCE}" \
+  --destination="/" \
+  --config="${HOME}/.config/chezmoi/chezmoi.yaml" \
+  "$@"
