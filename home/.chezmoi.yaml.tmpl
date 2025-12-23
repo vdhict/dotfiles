@@ -106,9 +106,9 @@ status:
 hooks:
   read-source-state:
     pre:
-      command: {{ .chezmoi.workingTree }}/home/.chezmoihooks/ensure-pre-requisites.sh
+      command: "{{ .chezmoi.workingTree }}/home/.chezmoihooks/ensure-pre-requisites.sh"
 
-{{- /* Export variables for use in templates */ -}}
+{{ /* Export variables for use in templates */ }}
 data:
   # Platform detection
   is_ubuntu: {{ $ubuntu }}
