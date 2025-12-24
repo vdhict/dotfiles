@@ -15,13 +15,19 @@ mkdir -p "${HOME}/.local/bin"
 # Install chezmoi if not present
 if ! command -v chezmoi &>/dev/null && [[ ! -x "${CHEZMOI_BIN}" ]]; then
   echo "==> Installing chezmoi..."
+  installed=false
   for i in 1 2 3; do
-    if bash -c "$(curl -fsLS get.chezmoi.io)" -- -b "${HOME}/.local/bin"; then
+    if bash -c "$(curl -fsLS get.chezmoi.io)" -- -b "${HOME}/.local/bin" 2>/dev/null; then
+      installed=true
       break
     fi
     echo "Retry $i/3..."
-    sleep 2
+    sleep 3
   done
+  if [[ "$installed" != "true" ]]; then
+    echo "ERROR: Failed to install chezmoi after 3 attempts"
+    exit 1
+  fi
 fi
 
 # Add to PATH for this session
