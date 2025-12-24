@@ -15,7 +15,13 @@ mkdir -p "${HOME}/.local/bin"
 # Install chezmoi if not present
 if ! command -v chezmoi &>/dev/null && [[ ! -x "${CHEZMOI_BIN}" ]]; then
   echo "==> Installing chezmoi..."
-  sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "${HOME}/.local/bin"
+  for i in 1 2 3; do
+    if bash -c "$(curl -fsLS get.chezmoi.io)" -- -b "${HOME}/.local/bin"; then
+      break
+    fi
+    echo "Retry $i/3..."
+    sleep 2
+  done
 fi
 
 # Add to PATH for this session
