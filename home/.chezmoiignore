@@ -27,10 +27,10 @@
 {{ if .is_devcontainer -}}
 # Skip 1Password and SSH keys in devcontainers
 .chezmoiscripts/*-install-1password-cli.sh
-private_dot_ssh/private_id_ed25519.tmpl
-private_dot_ssh/id_ed25519.pub.tmpl
-private_dot_ssh/allowed_signers.tmpl
-dot_config/fish/conf.d/30-1password.fish.tmpl
+.ssh/id_ed25519
+.ssh/id_ed25519.pub
+.ssh/allowed_signers
+.config/fish/conf.d/30-1password.fish
 {{- end }}
 
 # Cache files
