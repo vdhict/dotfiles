@@ -1,8 +1,12 @@
 #!/bin/bash
 # Convenience script for one-liner installation
-# Usage: sh -c "$(curl -fsSL https://raw.githubusercontent.com/vdhict/dotfiles/HEAD/scripts/install_dotfiles.sh)"
+# Usage: sh -c "$(curl -fsSL https://raw.githubusercontent.com/vdhict/dotfiles/main/scripts/install_dotfiles.sh)"
 
 set -euo pipefail
+
+# Set timezone and non-interactive mode for apt
+export TZ="${TZ:-Europe/Amsterdam}"
+export DEBIAN_FRONTEND="noninteractive"
 
 # Configuration
 DOTFILES_REPO_HOST="${DOTFILES_REPO_HOST:-https://github.com}"

@@ -72,6 +72,11 @@
 [status]
   submoduleSummary = false
 
+[user]
+  email = {{ .email }}
+  name = {{ .name }}
+
+{{- if not .is_devcontainer }}
 # Commit signing with SSH key from 1Password
 [commit]
   gpgSign = true
@@ -85,14 +90,13 @@
 [gpg "ssh"]
   allowedSignersFile = ~/.ssh/allowed_signers
 
+[user]
+  signingkey = ~/.ssh/id_ed25519.pub
+
 # Use SSH for GitHub
 [url "ssh://git@github.com/"]
   pushInsteadOf = https://github.com/
-
-[user]
-  email = {{ .email }}
-  name = {{ .name }}
-  signingkey = ~/.ssh/id_ed25519.pub
+{{- end }}
 
 # Aliases
 [alias]
