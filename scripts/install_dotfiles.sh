@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenience script for one-liner installation
-# Usage: sh -c "$(curl -fsSL https://raw.githubusercontent.com/vdhict/dotfiles/main/scripts/install_dotfiles.sh)"
+# Usage: bash -c "$(curl -fsSL https://raw.githubusercontent.com/vdhict/dotfiles/main/scripts/install_dotfiles.sh)"
 
 set -euo pipefail
 

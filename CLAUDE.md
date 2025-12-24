@@ -69,7 +69,7 @@ dotfiles-vdhict/
 # Minimum mode (Docker)
 docker run -it --rm ubuntu:24.04 bash -c "
   apt-get update && apt-get install -y curl git
-  sh -c \"\$(curl -fsSL https://raw.githubusercontent.com/vdhict/dotfiles/main/scripts/install_dotfiles.sh)\"
+  bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/vdhict/dotfiles/main/scripts/install_dotfiles.sh)\"
 "
 
 # Full mode (WSL or fresh Ubuntu)

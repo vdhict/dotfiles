@@ -13,13 +13,13 @@ Cross-platform dotfiles managed with [chezmoi](https://chezmoi.io), featuring Fi
 ## Quick Install
 
 ```bash
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/vdhict/dotfiles/main/scripts/install_dotfiles.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/vdhict/dotfiles/main/scripts/install_dotfiles.sh)"
 ```
 
 Or with wget:
 
 ```bash
-sh -c "$(wget -qO- https://raw.githubusercontent.com/vdhict/dotfiles/main/scripts/install_dotfiles.sh)"
+bash -c "$(wget -qO- https://raw.githubusercontent.com/vdhict/dotfiles/main/scripts/install_dotfiles.sh)"
 ```
 
 ## Manual Installation
