@@ -38,7 +38,9 @@ install_chezmoi() {
     *) echo "Unsupported OS: $(uname -s)"; return 1 ;;
   esac
 
-  local url="https://github.com/twpayne/chezmoi/releases/latest/download/chezmoi-${os}-${arch}"
+  # Use specific version to avoid "latest" redirect issues
+  local version="2.52.0"
+  local url="https://github.com/twpayne/chezmoi/releases/download/v${version}/chezmoi-${os}-${arch}"
   if curl -fsSL "$url" -o "${bin_dir}/chezmoi"; then
     chmod +x "${bin_dir}/chezmoi"
     return 0
