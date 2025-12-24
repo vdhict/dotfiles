@@ -13,11 +13,45 @@ echo "==> Installing dotfiles..."
 mkdir -p "${HOME}/.local/bin"
 
 # Install chezmoi if not present
+install_chezmoi() {
+  local bin_dir="${HOME}/.local/bin"
+
+  # Try official installer first
+  if bash -c "$(curl -fsLS get.chezmoi.io)" -- -b "$bin_dir" 2>/dev/null; then
+    return 0
+  fi
+
+  # Fallback: download directly from GitHub releases
+  echo "Trying direct download from GitHub..."
+  local arch
+  case "$(uname -m)" in
+    x86_64) arch="amd64" ;;
+    aarch64|arm64) arch="arm64" ;;
+    armv7l) arch="arm" ;;
+    *) echo "Unsupported architecture: $(uname -m)"; return 1 ;;
+  esac
+
+  local os
+  case "$(uname -s)" in
+    Linux) os="linux" ;;
+    Darwin) os="darwin" ;;
+    *) echo "Unsupported OS: $(uname -s)"; return 1 ;;
+  esac
+
+  local url="https://github.com/twpayne/chezmoi/releases/latest/download/chezmoi-${os}-${arch}"
+  if curl -fsSL "$url" -o "${bin_dir}/chezmoi"; then
+    chmod +x "${bin_dir}/chezmoi"
+    return 0
+  fi
+
+  return 1
+}
+
 if ! command -v chezmoi &>/dev/null && [[ ! -x "${CHEZMOI_BIN}" ]]; then
   echo "==> Installing chezmoi..."
   installed=false
   for i in 1 2 3; do
-    if bash -c "$(curl -fsLS get.chezmoi.io)" -- -b "${HOME}/.local/bin" 2>/dev/null; then
+    if install_chezmoi; then
       installed=true
       break
     fi
