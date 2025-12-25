@@ -93,3 +93,7 @@ wsl -d Ubuntu-Test
   - Disable git commit signing (gpgSign = false in containers)
 - Added timezone configuration (Europe/Amsterdam)
 - Set DEBIAN_FRONTEND=noninteractive for apt
+- Fixed install script: use `bash` instead of `sh` (pipefail is bash-only)
+- Fixed sudo in Docker: added `run_privileged` helper for root detection
+- Added chezmoi installation fallback with direct GitHub download
+- Fixed .chezmoiignore: use target paths instead of source paths
